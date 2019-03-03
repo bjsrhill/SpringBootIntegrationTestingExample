@@ -1,0 +1,25 @@
+stage('IndexPage') {
+  parallel 1: {
+    node {
+      stage('Index') {
+        retry(1) {
+            ws('workspace/indexRest') {
+              try {
+                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'WipeWorkspace'], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'indexRest']], submoduleCfg: [], url: 'https://github.com/bjsrhill/SpringBootIntegrationTestingExample.git']]])
+                 dir('workspace/indexRest') {
+                 {
+                    sh "mvn clean verify -PintegrationTesting -Dcucumber.options='--tags @index-menus --tags ~@WIP'"
+                 currentBuild.result='SUCCESS'
+                }
+              }
+            } catch(Exception e) { 
+                echo '--------------Checking build status in Index-----------------------'
+                currentBuild.result='UNSTABLE'
+            }
+            cucumber fileIncludePattern: '**/*.json', sortingMethod: 'ALPHABETICAL'
+          }
+        }
+      }
+    }
+  }
+}
