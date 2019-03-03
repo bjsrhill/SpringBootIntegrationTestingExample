@@ -1,15 +1,17 @@
-stage('IndexPage') {
-  parallel {
-    node {
-      stage('Index') {
-          ws('workspace/indexRest') {
-               checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'WipeWorkspace'], [$class: 'RelativeTargetDirectory', relativeTargetDir: 'indexRest']], submoduleCfg: [], url: 'https://github.com/bjsrhill/SpringBootIntegrationTestingExample.git'])
-               dir('workspace/indexRest') {
-                sh "mvn clean verify -PintegrationTesting -Dcucumber.options='--tags @index-menus --tags ~@WIP'"
-              }
-            }
-          cucumber fileIncludePattern: '**/*.json', sortingMethod: 'ALPHABETICAL'
-        }
+node {
+   stage('Preparation') { 
+      git 'https://github.com/bjsrhill/SpringBootIntegrationTestingExample.git'          
+      mvnHome = tool 'M3'
+   }
+   stage('Build') {
+      if (isUnix()) {
+         sh "'${mvnHome}/bin/mvn' clean verify -PintegrationTesting -Dcucumber.options='--tags @index-menus --tags ~@WIP'"
+      } else {
+         bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
       }
-    }
-  }
+   }
+   stage('Results') {
+      cucumber fileIncludePattern: '**/*.json', sortingMethod: 'ALPHABETICAL'
+      archive 'target/*.jar'
+   }
+}
