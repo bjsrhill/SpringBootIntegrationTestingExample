@@ -1,5 +1,5 @@
 stage('IndexPage') {
-  parallel 1: {
+  parallel index: {
     node {
       stage('Index') {
         retry(1) {
