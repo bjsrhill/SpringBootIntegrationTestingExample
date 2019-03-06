@@ -2,9 +2,6 @@ package com.beverlyshill.steps;
 
 import static org.junit.Assert.assertTrue;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.beverlyshill.rest.Index;
 import com.beverlyshill.rest.beverlyshillREST;
 

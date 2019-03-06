@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import io.restassured.response.Response;
 
-public final class Index {
+public class Index {
 	
 	private String [] listOfStrings = {"Beverly S. Hill", "Professional Experience", "Other Experience", "Technical Skills", "Training", "Education"};
 		
